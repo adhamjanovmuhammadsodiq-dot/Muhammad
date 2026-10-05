@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Submission, QuestionResult } from '../types.ts';
 import confetti from 'canvas-confetti';
+import { useI18n } from '../lib/i18n.tsx';
 import { CheckCircle2, XCircle, AlertCircle, Clock, Award, ArrowLeft, RotateCcw, Printer, Share2, FileCheck } from 'lucide-react';
 
 interface TestResultViewProps {
@@ -11,6 +12,7 @@ interface TestResultViewProps {
 }
 
 export const TestResultView: React.FC<TestResultViewProps> = ({ submission, onRetake, onBackToTests, onGoToMistakes }) => {
+  const { t } = useI18n();
   const confettiRan = useRef(false);
 
   useEffect(() => {
@@ -48,55 +50,55 @@ export const TestResultView: React.FC<TestResultViewProps> = ({ submission, onRe
       <div className="flex items-center justify-between print:hidden">
         <button
           onClick={onBackToTests}
-          className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Barcha testlarga qaytish</span>
+          <span>{t.backToTests}</span>
         </button>
 
         <div className="flex items-center gap-2">
           {submission.incorrectCount > 0 && onGoToMistakes && (
             <button
               onClick={onGoToMistakes}
-              className="h-9 px-3 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-100 transition-colors cursor-pointer"
+              className="h-9 px-3 rounded-xl border border-rose-500/40 bg-rose-950/50 text-rose-300 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-900/60 transition-colors cursor-pointer"
             >
-              <span>Xatolarni ishlash ({submission.incorrectCount})</span>
+              <span>{t.mistakesButton} ({submission.incorrectCount})</span>
             </button>
           )}
 
           <button
             onClick={handlePrint}
-            className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="h-9 px-3 rounded-xl border border-indigo-500/30 bg-slate-900/80 text-slate-200 hover:bg-slate-800 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Sertifikatni chop etish</span>
+            <Printer className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{t.printCert}</span>
           </button>
           <button
             onClick={onRetake}
-            className="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Qayta topshirish</span>
+            <span>{t.retake}</span>
           </button>
         </div>
       </div>
 
       {/* Main Score Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm print:border-none print:shadow-none">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="bg-slate-900/85 backdrop-blur-xl rounded-3xl border border-indigo-500/25 p-6 sm:p-8 shadow-2xl shadow-indigo-950/30 print:border-none print:shadow-none">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-indigo-500/20">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 mb-1">
               <span>{submission.subject}</span>
               <span>·</span>
-              <span>Rasmiy Tekshiruv Natijasi</span>
+              <span>{t.resultsTitle}</span>
               <span>·</span>
-              <span className="font-mono text-slate-500">ID: {certificateId}</span>
+              <span className="font-mono text-slate-400">ID: {certificateId}</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">
               {submission.testTitle}
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Topshiruvchi: <b>{submission.studentName}</b> ({submission.studentPhone}) · {new Date(submission.submittedAt).toLocaleString('uz-UZ')}
+            <p className="text-xs text-slate-400 mt-1">
+              Topshiruvchi: <b className="text-slate-200">{submission.studentName}</b> ({submission.studentPhone}) · {new Date(submission.submittedAt).toLocaleString('uz-UZ')}
             </p>
           </div>
 

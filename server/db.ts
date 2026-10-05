@@ -322,11 +322,19 @@ class Database {
           ],
           otpCodes: [],
           sessions: [],
-          tests: INITIAL_TESTS,
+          tests: INITIAL_TESTS.map(t => ({ ...t, durationMinutes: 5 })),
           submissions: []
         };
         this.persistSync();
       }
+
+      // Enforce 5-minute standard for all tests ("5 minuta bolsin")
+      if (this.data.tests) {
+        for (const t of this.data.tests) {
+          t.durationMinutes = 5;
+        }
+      }
+
       this.isLoaded = true;
     } catch (err) {
       console.error('[Database] Faylni yuklashda xatolik:', err);

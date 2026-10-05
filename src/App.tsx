@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
+import { I18nProvider, useI18n } from './lib/i18n.tsx';
 import { Header } from './components/Header.tsx';
 import { Footer } from './components/Footer.tsx';
 import { AuthModal } from './components/AuthModal.tsx';
@@ -14,7 +15,8 @@ import { ApiClient } from './lib/api.ts';
 import { ActiveTestDetails, Submission } from './types.ts';
 
 const MainContent: React.FC = () => {
-  const { user, openAuthModal } = useAuth();
+  const { user } = useAuth();
+  const { t } = useI18n();
 
   const [currentView, setCurrentView] = useState<'tests' | 'results' | 'mistakes' | 'stats' | 'teacher'>('tests');
   const [activeTestTaking, setActiveTestTaking] = useState<ActiveTestDetails | null>(null);
@@ -26,6 +28,8 @@ const MainContent: React.FC = () => {
     try {
       setLoadingTest(true);
       const testData = await ApiClient.getTestToTake(testId);
+      // Ensure duration is 5 minutes as requested ("5 minuta bolsin")
+      testData.durationMinutes = 5;
       setActiveSubmission(null);
       setActiveTestTaking(testData);
     } catch (err: any) {
@@ -35,11 +39,12 @@ const MainContent: React.FC = () => {
     }
   };
 
-  // Start Blitz Arena Challenge
+  // Start Blitz Arena Challenge (5 minutes)
   const handleStartBlitz = async () => {
     try {
       setLoadingTest(true);
       const blitzData = await ApiClient.getBlitzChallenge();
+      blitzData.durationMinutes = 5;
       setActiveSubmission(null);
       setActiveTestTaking(blitzData);
     } catch (err: any) {
@@ -72,18 +77,24 @@ const MainContent: React.FC = () => {
   // If student is currently taking an exam:
   if (activeTestTaking) {
     return (
-      <TestTakingView
-        test={activeTestTaking}
-        onFinish={handleFinishTest}
-        onCancel={handleBackToCatalog}
-      />
+      <div className="relative min-h-screen">
+        <div className="cosmic-bg" />
+        <div className="cosmic-stars" />
+        <TestTakingView
+          test={activeTestTaking}
+          onFinish={handleFinishTest}
+          onCancel={handleBackToCatalog}
+        />
+      </div>
     );
   }
 
   // If student is viewing the result of a submitted test:
   if (activeSubmission) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="relative min-h-screen flex flex-col">
+        <div className="cosmic-bg" />
+        <div className="cosmic-stars" />
         <Header currentView={currentView} onNavigate={setCurrentView} />
         <main className="flex-1">
           <TestResultView
@@ -103,7 +114,11 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="relative min-h-screen flex flex-col transition-colors">
+      {/* Cosmic Space Background Layers */}
+      <div className="cosmic-bg" />
+      <div className="cosmic-stars" />
+
       <Header
         currentView={currentView}
         onNavigate={(view) => {
@@ -115,10 +130,10 @@ const MainContent: React.FC = () => {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {loadingTest && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl flex items-center gap-3">
-              <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md">
+            <div className="bg-slate-900 border border-indigo-500/30 p-6 rounded-2xl shadow-2xl flex items-center gap-3">
+              <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+              <span className="text-sm font-semibold text-white">
                 Test yuklanmoqda...
               </span>
             </div>
@@ -161,8 +176,10 @@ const MainContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainContent />
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <MainContent />
+      </AuthProvider>
+    </I18nProvider>
   );
 }

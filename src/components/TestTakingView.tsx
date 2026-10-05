@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ActiveTestDetails, QuestionOption } from '../types.ts';
 import { ApiClient } from '../lib/api.ts';
 import { useAuth } from '../context/AuthContext.tsx';
+import { useI18n } from '../lib/i18n.tsx';
 import { Clock, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, Flag, HelpCircle, Send, ArrowLeft, Maximize, Minimize, Calculator, FileEdit, Type, ShieldAlert } from 'lucide-react';
 
 interface TestTakingViewProps {
@@ -12,6 +13,7 @@ interface TestTakingViewProps {
 
 export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, onCancel }) => {
   const { user } = useAuth();
+  const { t } = useI18n();
   const [guestName, setGuestName] = useState('O\'quvchi');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, 'A' | 'B' | 'C' | 'D'>>(() => {
@@ -24,7 +26,8 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
   });
 
   const [flagged, setFlagged] = useState<Record<string, boolean>>({});
-  const [secondsRemaining, setSecondsRemaining] = useState(() => test.durationMinutes * 60);
+  // Always 5 minutes (300 seconds) standard test duration
+  const [secondsRemaining, setSecondsRemaining] = useState(() => (test.durationMinutes || 5) * 60);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [startTime] = useState(Date.now());
@@ -159,10 +162,10 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
       : 'text-sm sm:text-lg leading-relaxed';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col pb-16">
+    <div className="min-h-screen bg-transparent flex flex-col pb-16">
       {/* Tab Warning Toast */}
       {tabWarnings > 0 && (
-        <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-bold flex items-center justify-center gap-2 shadow-md">
+        <div className="bg-amber-500/90 backdrop-blur-md text-slate-950 px-4 py-2 text-xs font-bold flex items-center justify-center gap-2 shadow-lg">
           <ShieldAlert className="w-4 h-4 shrink-0" />
           <span>
             Diqqat: Siz imtihon oynasidan {tabWarnings} marta boshqa sahifaga o'tdingiz. Tizimda barcha harakatlar qayd etilmoqda.
@@ -171,7 +174,7 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
       )}
 
       {/* Sticky Top Exam Bar */}
-      <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6">
+      <header className="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-indigo-500/20 py-3 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <button
@@ -181,15 +184,15 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                 }
               }}
               title="Orqaga qaytish"
-              className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0 cursor-pointer"
+              className="w-9 h-9 rounded-xl border border-indigo-500/30 bg-slate-900/80 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 shrink-0 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div className="min-w-0">
-              <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block truncate">
-                {test.subject} · {test.grade}
+              <span className="text-[11px] font-bold text-indigo-400 block truncate">
+                {test.subject} · {test.grade} · 5 MIN
               </span>
-              <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
+              <h1 className="text-sm sm:text-base font-bold text-white truncate">
                 {test.title}
               </h1>
             </div>
@@ -202,7 +205,7 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                 setFontSize(prev => prev === 'normal' ? 'large' : prev === 'large' ? 'huge' : 'normal');
               }}
               title="Shrift hajmini o'zgartirish"
-              className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="w-8 h-8 rounded-lg border border-indigo-500/30 bg-slate-900/80 text-slate-300 flex items-center justify-center text-xs font-bold hover:bg-slate-800 cursor-pointer"
             >
               <Type className="w-3.5 h-3.5" />
             </button>
@@ -210,11 +213,11 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             {/* Calculator toggle */}
             <button
               onClick={() => setShowCalculator(!showCalculator)}
-              title="Kalkulyator"
+              title={t.calculator}
               className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors cursor-pointer ${
                 showCalculator
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                  : 'border-indigo-500/30 bg-slate-900/80 text-slate-300 hover:bg-slate-800'
               }`}
             >
               <Calculator className="w-3.5 h-3.5" />
@@ -223,11 +226,11 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             {/* Scratchpad toggle */}
             <button
               onClick={() => setShowScratchpad(!showScratchpad)}
-              title="Qoralama"
+              title={t.scratchpad}
               className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors cursor-pointer ${
                 showScratchpad
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                  : 'border-indigo-500/30 bg-slate-900/80 text-slate-300 hover:bg-slate-800'
               }`}
             >
               <FileEdit className="w-3.5 h-3.5" />
@@ -237,16 +240,16 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             <button
               onClick={toggleFullscreen}
               title="To'liq ekran"
-              className="hidden sm:flex w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="hidden sm:flex w-8 h-8 rounded-lg border border-indigo-500/30 bg-slate-900/80 text-slate-300 items-center justify-center hover:bg-slate-800 cursor-pointer"
             >
               {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
             </button>
 
-            {/* Live Countdown */}
+            {/* Live Countdown (5 minutes) */}
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono text-sm font-bold border transition-colors ${
               isLowTime
-                ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 animate-pulse'
-                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200'
+                ? 'bg-rose-950/60 border-rose-500/50 text-rose-400 animate-pulse'
+                : 'bg-slate-900/80 border-indigo-500/30 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.15)]'
             }`}>
               <Clock className="w-4 h-4" />
               <span>{formatTimer(secondsRemaining)}</span>
@@ -255,11 +258,11 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             {/* Complete Test CTA */}
             <button
               onClick={() => setShowConfirmModal(true)}
-              className="h-9 px-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-[0.98] text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Testni yakunlash</span>
-              <span className="sm:hidden">Yakunlash</span>
+              <span className="hidden sm:inline">{t.finishTest}</span>
+              <span className="sm:hidden">{t.finishTest}</span>
             </button>
           </div>
         </div>
@@ -270,10 +273,10 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
         
         {/* Question Area (3 columns on desktop) */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm">
+          <div className="bg-slate-900/85 backdrop-blur-xl rounded-3xl border border-indigo-500/25 p-5 sm:p-7 shadow-xl shadow-indigo-950/30">
             {/* Question Header & Meta */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80 mb-5">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="flex items-center justify-between pb-4 border-b border-indigo-500/20 mb-5">
+              <span className="text-xs font-semibold text-slate-400">
                 Savol {currentIndex + 1} / {totalQuestions}
               </span>
               <div className="flex items-center gap-2">
@@ -281,18 +284,18 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                   onClick={() => toggleFlag(currentQuestion.id)}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                     flagged[currentQuestion.id]
-                      ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
-                      : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300'
+                      : 'text-slate-400 hover:bg-slate-800'
                   }`}
                 >
                   <Flag className="w-3.5 h-3.5" />
-                  <span>{flagged[currentQuestion.id] ? 'Belgilangan' : 'Ko\'rib chiqish'}</span>
+                  <span>{flagged[currentQuestion.id] ? t.reviewFlag : t.reviewFlag}</span>
                 </button>
               </div>
             </div>
 
             {/* Question Text */}
-            <h2 className={`${questionTextSize} font-medium text-slate-900 dark:text-white mb-6 select-none`}>
+            <h2 className={`${questionTextSize} font-medium text-white mb-6 select-none`}>
               {currentQuestion.text}
             </h2>
 
@@ -306,15 +309,15 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                     onClick={() => handleSelectOption(option.key)}
                     className={`w-full min-h-[52px] p-4 rounded-2xl text-left border flex items-center gap-3.5 transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-indigo-600 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 ring-2 ring-indigo-500/20 shadow-sm'
-                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200'
+                        ? 'border-indigo-400 bg-indigo-600/30 text-white ring-2 ring-indigo-500/30 shadow-md shadow-indigo-600/20'
+                        : 'border-indigo-500/20 bg-slate-800/60 hover:border-indigo-400/40 text-slate-200'
                     }`}
                   >
                     <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
                         isSelected
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          ? 'bg-indigo-500 text-white shadow-sm'
+                          : 'bg-slate-800 border border-slate-700 text-slate-300'
                       }`}
                     >
                       {option.key}
@@ -333,30 +336,30 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             <button
               onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-40 cursor-pointer"
+              className="h-11 px-4 rounded-xl border border-indigo-500/20 text-slate-300 bg-slate-900/80 hover:bg-slate-800 text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Oldingi</span>
+              <span>{t.prev}</span>
             </button>
 
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+            <span className="text-xs text-slate-400 font-mono">
               {currentIndex + 1} / {totalQuestions}
             </span>
 
             {currentIndex < totalQuestions - 1 ? (
               <button
                 onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                className="h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+                className="h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-600/30 transition-all cursor-pointer"
               >
-                <span>Keyingi</span>
+                <span>{t.next}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button
                 onClick={() => setShowConfirmModal(true)}
-                className="h-11 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+                className="h-11 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold flex items-center gap-2 shadow-md shadow-emerald-600/30 transition-all cursor-pointer"
               >
-                <span>Topshirish</span>
+                <span>{t.submit}</span>
                 <CheckCircle className="w-4 h-4" />
               </button>
             )}
@@ -366,9 +369,9 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
         {/* Right Palette & Tools Drawer */}
         <div className="space-y-4">
           {/* Question Grid */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
-            <h3 className="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3">
-              Savollar xaritasi
+          <div className="bg-slate-900/85 backdrop-blur-xl rounded-3xl border border-indigo-500/25 p-5 shadow-xl shadow-indigo-950/20">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3">
+              {t.questionMap}
             </h3>
 
             <div className="grid grid-cols-5 gap-2">
@@ -377,13 +380,13 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                 const isAnswered = Boolean(answers[q.id]);
                 const isFlagged = Boolean(flagged[q.id]);
 
-                let bgClass = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+                let bgClass = 'bg-slate-800/80 text-slate-400 border-slate-700';
                 if (isCurrent) {
-                  bgClass = 'bg-indigo-600 text-white ring-2 ring-indigo-500/30';
+                  bgClass = 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/30';
                 } else if (isAnswered) {
-                  bgClass = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800';
+                  bgClass = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
                 } else if (isFlagged) {
-                  bgClass = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800';
+                  bgClass = 'bg-amber-950/60 text-amber-300 border-amber-500/40';
                 }
 
                 return (
@@ -399,39 +402,39 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             </div>
 
             {/* Legend */}
-            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="mt-5 pt-4 border-t border-slate-800 space-y-2 text-[11px] text-slate-400">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                <span>Belgilangan: <b>{answeredCount} ta</b></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span>{t.answered}: <b>{answeredCount} ta</b></span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                <span>Belgilanmagan: <b>{unansweredCount} ta</b></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+                <span>{t.unanswered}: <b>{unansweredCount} ta</b></span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                <span>Ko'rib chiqish: <b>{Object.values(flagged).filter(Boolean).length} ta</b></span>
+                <span>{t.reviewFlag}: <b>{Object.values(flagged).filter(Boolean).length} ta</b></span>
               </div>
             </div>
           </div>
 
-          {/* Interactive Calculator (when toggled) */}
+          {/* Interactive Calculator */}
           {showCalculator && (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-4 shadow-lg animate-in fade-in space-y-3">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+            <div className="bg-slate-900/90 backdrop-blur-xl rounded-3xl border border-indigo-500/30 p-4 shadow-2xl animate-in fade-in space-y-3">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-200">
                 <span className="flex items-center gap-1.5">
-                  <Calculator className="w-4 h-4 text-indigo-500" />
-                  Kalkulyator
+                  <Calculator className="w-4 h-4 text-indigo-400" />
+                  {t.calculator}
                 </span>
                 <button
                   onClick={() => setShowCalculator(false)}
-                  className="text-slate-400 hover:text-slate-600 text-xs"
+                  className="text-slate-400 hover:text-white text-xs cursor-pointer"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono text-right text-base font-bold text-slate-900 dark:text-white truncate">
+              <div className="p-2.5 rounded-xl bg-slate-950 font-mono text-right text-base font-bold text-white border border-indigo-500/20 truncate">
                 {calcDisplay}
               </div>
 
@@ -440,7 +443,7 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                   <button
                     key={btn}
                     onClick={() => handleCalcBtn(btn)}
-                    className="h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition-colors cursor-pointer"
+                    className="h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors cursor-pointer border border-slate-700/50"
                   >
                     {btn}
                   </button>
@@ -449,17 +452,17 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
             </div>
           )}
 
-          {/* Interactive Scratchpad (when toggled) */}
+          {/* Interactive Scratchpad */}
           {showScratchpad && (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-4 shadow-lg animate-in fade-in space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+            <div className="bg-slate-900/90 backdrop-blur-xl rounded-3xl border border-indigo-500/30 p-4 shadow-2xl animate-in fade-in space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-200">
                 <span className="flex items-center gap-1.5">
-                  <FileEdit className="w-4 h-4 text-indigo-500" />
-                  Qoralama (Scratchpad)
+                  <FileEdit className="w-4 h-4 text-indigo-400" />
+                  {t.scratchpad}
                 </span>
                 <button
                   onClick={() => setShowScratchpad(false)}
-                  className="text-slate-400 hover:text-slate-600 text-xs"
+                  className="text-slate-400 hover:text-white text-xs cursor-pointer"
                 >
                   ✕
                 </button>
@@ -469,7 +472,7 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
                 placeholder="Formulalar va hisob-kitoblar uchun qoralama..."
                 value={scratchpadText}
                 onChange={(e) => setScratchpadText(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                className="w-full p-2.5 rounded-xl border border-indigo-500/20 bg-slate-950 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
             </div>
           )}
@@ -478,48 +481,48 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
 
       {/* Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-md bg-slate-900 rounded-3xl p-6 shadow-2xl border border-indigo-500/30 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-400">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Testni yakunlaysizmi?
+                <h3 className="text-base font-bold text-white">
+                  {t.modalFinishTitle}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Natijalar serverda tekshirilib hisoblanadi.
+                <p className="text-xs text-slate-400">
+                  {t.modalFinishDesc}
                 </p>
               </div>
             </div>
 
             {!user && (
               <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Ismingiz (Natija sertifikatida ko'rsatish uchun)
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  {t.yourName}
                 </label>
                 <input
                   type="text"
                   placeholder="Masalan: Sardor"
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-indigo-500/30 bg-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             )}
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+            <div className="p-3.5 rounded-2xl bg-slate-800/70 border border-indigo-500/20 space-y-1.5 text-xs text-slate-300">
               <div className="flex justify-between">
                 <span>Jami savollar:</span>
-                <span className="font-semibold">{totalQuestions} ta</span>
+                <span className="font-semibold text-white">{totalQuestions} ta</span>
               </div>
-              <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+              <div className="flex justify-between text-emerald-400">
                 <span>Belgilangan javoblar:</span>
                 <span className="font-semibold">{answeredCount} ta</span>
               </div>
               {unansweredCount > 0 && (
-                <div className="flex justify-between text-amber-600 dark:text-amber-400">
+                <div className="flex justify-between text-amber-400">
                   <span>Belgilanmagan savollar:</span>
                   <span className="font-semibold">{unansweredCount} ta</span>
                 </div>
@@ -530,17 +533,17 @@ export const TestTakingView: React.FC<TestTakingViewProps> = ({ test, onFinish, 
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium cursor-pointer"
+                className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-medium cursor-pointer"
               >
-                Davom ettirish
+                {t.continueSolving}
               </button>
               <button
                 type="button"
                 onClick={handleSubmitTest}
                 disabled={isSubmitting}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 cursor-pointer"
               >
-                {isSubmitting ? 'Hisoblanmoqda...' : 'Ha, yakunlash'}
+                {isSubmitting ? 'Hisoblanmoqda...' : t.confirmFinish}
               </button>
             </div>
           </div>

@@ -44,10 +44,10 @@ export const MistakesBankView: React.FC<MistakesBankViewProps> = ({ onGoToTests 
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Xatolar Banki va Mustahkamlash
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+        <p className="text-xs text-slate-400 mt-0.5">
           Oldingi testlarda xato qilingan savollar to'plami. Bu yerda ularni qayta yechib, bilmingizni mustahkamlang.
         </p>
       </div>
@@ -55,31 +55,31 @@ export const MistakesBankView: React.FC<MistakesBankViewProps> = ({ onGoToTests 
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-32 rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+            <div key={i} className="h-32 rounded-3xl bg-slate-900/60 border border-indigo-500/20 animate-pulse" />
           ))}
         </div>
       ) : mistakes.length === 0 ? (
-        <div className="p-12 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mx-auto">
+        <div className="p-12 rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-indigo-500/20 text-center space-y-4 shadow-xl">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 mx-auto">
             <CheckCircle2 className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <h3 className="text-base font-bold text-white">
             Xatolar banki bo'sh!
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">
             Siz barcha savollarga to'g'ri javob bergansiz yoki hali test topshirmagansiz. Bilimingizni sinash uchun testlarni boshlang.
           </p>
           <button
             onClick={onGoToTests}
-            className="h-10 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-colors"
+            className="h-10 px-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition-all cursor-pointer"
           >
             Testlar ro'yxatiga o'tish
           </button>
         </div>
       ) : (
         <div className="space-y-5">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
-            <span>Jami xatolar soni: <b>{mistakes.length} ta</b></span>
+          <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+            <span>Jami xatolar soni: <b className="text-white">{mistakes.length} ta</b></span>
             <span>Qayta urinish uchun variantni bosing</span>
           </div>
 
@@ -91,26 +91,26 @@ export const MistakesBankView: React.FC<MistakesBankViewProps> = ({ onGoToTests 
             return (
               <div
                 key={m.questionId || idx}
-                className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
+                className="p-5 sm:p-6 rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-indigo-500/25 shadow-xl shadow-indigo-950/20 space-y-4"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between pb-3 border-b border-indigo-500/20">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-center">
+                    <span className="w-6 h-6 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center justify-center">
                       {idx + 1}
                     </span>
-                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                    <span className="text-xs font-bold text-indigo-400">
                       {m.subject}
                     </span>
-                    <span className="text-slate-300 dark:text-slate-700">·</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px]">
+                    <span className="text-slate-600">·</span>
+                    <span className="text-xs text-slate-400 truncate max-w-[200px]">
                       {m.testTitle}
                     </span>
                   </div>
 
                   <button
                     onClick={() => toggleSolution(m.questionId)}
-                    className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                    className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer"
                   >
                     <Lightbulb className="w-3.5 h-3.5" />
                     <span>{isRevealed ? 'Yechimni yashirish' : 'Yechimni ko\'rish'}</span>
@@ -118,7 +118,7 @@ export const MistakesBankView: React.FC<MistakesBankViewProps> = ({ onGoToTests 
                 </div>
 
                 {/* Question Text */}
-                <h3 className="text-sm sm:text-base font-medium text-slate-900 dark:text-white leading-relaxed">
+                <h3 className="text-sm sm:text-base font-medium text-white leading-relaxed">
                   {m.questionText}
                 </h3>
 
