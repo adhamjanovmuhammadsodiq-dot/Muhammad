@@ -4,7 +4,7 @@ import { ApiClient } from '../lib/api.ts';
 import { X, Send, Lock, ArrowRight, RefreshCw, CheckCircle2, AlertCircle, Phone, UserCheck, KeyRound, ExternalLink } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, authModalTab, setUser } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, authModalTab, setUser, quickLoginAsTeacher } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'student' | 'teacher'>(authModalTab);
   const [step, setStep] = useState<'form' | 'otp'>('form');
@@ -412,7 +412,23 @@ export const AuthModal: React.FC = () => {
           )}
 
           {activeTab === 'teacher' && (
-            <form onSubmit={handleTeacherLogin} className="space-y-4">
+            <div className="space-y-4">
+              <button
+                type="button"
+                onClick={quickLoginAsTeacher}
+                className="w-full h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 active:scale-[0.99] transition-all cursor-pointer"
+              >
+                <UserCheck className="w-4 h-4" />
+                <span>Ustoz / Admin sifatida darhol kirish (1 bosishda)</span>
+              </button>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                <span className="flex-shrink mx-3 text-[11px] text-slate-400">yoki maxfiy parol bilan</span>
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+              </div>
+
+              <form onSubmit={handleTeacherLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
                   O'qituvchi telefon raqami
@@ -462,6 +478,7 @@ export const AuthModal: React.FC = () => {
                 )}
               </button>
             </form>
+          </div>
           )}
         </div>
       </div>

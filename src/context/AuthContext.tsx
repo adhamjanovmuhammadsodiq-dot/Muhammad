@@ -10,6 +10,7 @@ interface AuthContextType {
   openAuthModal: (tab?: 'student' | 'teacher') => void;
   closeAuthModal: () => void;
   setUser: (user: User | null) => void;
+  quickLoginAsTeacher: () => Promise<void>;
   logout: () => Promise<void>;
   darkMode: boolean;
   toggleDarkMode: () => void;
@@ -82,6 +83,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const quickLoginAsTeacher = async () => {
+    try {
+      const res = await ApiClient.quickTeacherLogin();
+      setUser(res.user);
+      setIsAuthModalOpen(false);
+    } catch (err: any) {
+      alert(err.message || 'Kirishda xatolik yuz berdi.');
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -92,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         openAuthModal,
         closeAuthModal,
         setUser,
+        quickLoginAsTeacher,
         logout,
         darkMode,
         toggleDarkMode,

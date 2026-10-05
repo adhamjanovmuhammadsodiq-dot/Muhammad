@@ -5,9 +5,9 @@
       "firstName": "Olim",
       "lastName": "Muallimov",
       "phone": "+998901234567",
-      "role": "admin",
+      "role": "teacher",
       "createdAt": 1788579330944,
-      "lastLoginAt": 1791171330944
+      "lastLoginAt": 1791174497140
     },
     {
       "id": "user-student-demo",
@@ -29,12 +29,12 @@
     },
     {
       "id": "usr-card5dry",
-      "firstName": "muhammadsodiq",
+      "firstName": "Muhammadsodiq",
       "lastName": "adhamjanov",
       "phone": "+998917690141",
       "role": "student",
       "createdAt": 1791171530937,
-      "lastLoginAt": 1791171530937
+      "lastLoginAt": 1791172480154
     }
   ],
   "otpCodes": [
@@ -73,6 +73,18 @@
       "used": true,
       "attempts": 1,
       "createdAt": 1791171521724
+    },
+    {
+      "id": "otp-1bfc51c7-40fd-4b5c-9109-349446da64fe",
+      "phone": "+998917690141",
+      "code": "263395",
+      "firstName": "Muhammadsodiq",
+      "lastName": "adhamjanov",
+      "role": "student",
+      "expiresAt": 1791172769772,
+      "used": true,
+      "attempts": 1,
+      "createdAt": 1791172469772
     }
   ],
   "sessions": [
@@ -82,6 +94,20 @@
       "role": "student",
       "createdAt": 1791171354274,
       "expiresAt": 1793763354274
+    },
+    {
+      "token": "29510b3e688954892a2988468633bd95e13f9f698cfaed7f5ca6dea4dedd1c66",
+      "userId": "usr-card5dry",
+      "role": "student",
+      "createdAt": 1791172480154,
+      "expiresAt": 1793764480154
+    },
+    {
+      "token": "6fd2fefb095cbc71f52bc605996435f5469f476edc5ac1d0d0443f33421e614a",
+      "userId": "user-admin",
+      "role": "teacher",
+      "createdAt": 1791174497142,
+      "expiresAt": 1793766497142
     }
   ],
   "tests": [
@@ -518,6 +544,225 @@
     }
   ],
   "submissions": [
+    {
+      "id": "sub-fsgaqigl",
+      "testId": "test-it-01",
+      "testTitle": "Informatika va IT: Dasturlash va Algoritmlar",
+      "subject": "IT va Dasturlash",
+      "userId": "guest-vvosnpe",
+      "studentName": "O'quvchi",
+      "studentPhone": "Mehmon",
+      "userAnswers": {
+        "qit-1": "C",
+        "qit-2": "A",
+        "qit-3": "C"
+      },
+      "score": 2,
+      "maxScore": 6,
+      "percentage": 33,
+      "totalQuestions": 3,
+      "correctCount": 1,
+      "incorrectCount": 2,
+      "unansweredCount": 0,
+      "passed": false,
+      "timeSpentSeconds": 11,
+      "submittedAt": 1791171904940,
+      "results": [
+        {
+          "questionId": "qit-1",
+          "questionText": "Ikkilik qidirish (Binary Search) algoritmining o'rtacha vaqt murakkabligi qanday?",
+          "options": [
+            {
+              "key": "A",
+              "text": "O(log n)"
+            },
+            {
+              "key": "B",
+              "text": "O(n)"
+            },
+            {
+              "key": "C",
+              "text": "O(n²)"
+            },
+            {
+              "key": "D",
+              "text": "O(1)"
+            }
+          ],
+          "userAnswer": "C",
+          "correctOption": "A",
+          "isCorrect": false,
+          "isUnanswered": false,
+          "explanation": "Binary Search har bir qadamda massivni ikkiga bo'lgani uchun uning vaqt murakkabligi O(log n) ga teng.",
+          "pointsEarned": 0,
+          "maxPoints": 2
+        },
+        {
+          "questionId": "qit-2",
+          "questionText": "Quyidagilardan qaysi biri HTTP protokolidagi xavfsiz (shifrlangan) standart hisoblanadi?",
+          "options": [
+            {
+              "key": "A",
+              "text": "HTTPS (port 443)"
+            },
+            {
+              "key": "B",
+              "text": "FTP (port 21)"
+            },
+            {
+              "key": "C",
+              "text": "Telnet (port 23)"
+            },
+            {
+              "key": "D",
+              "text": "HTTP (port 80)"
+            }
+          ],
+          "userAnswer": "A",
+          "correctOption": "A",
+          "isCorrect": true,
+          "isUnanswered": false,
+          "explanation": "HTTPS (SSL/TLS orqali shifrlangan HTTP) 443-portda ma'lumotlar xavfsizligini ta'minlaydi.",
+          "pointsEarned": 2,
+          "maxPoints": 2
+        },
+        {
+          "questionId": "qit-3",
+          "questionText": "JavaScript tilida qaysi kalit so'z qayta qiymat berib bo'lmaydigan (o'zgarmas) o'zgaruvchi e'lon qiladi?",
+          "options": [
+            {
+              "key": "A",
+              "text": "const"
+            },
+            {
+              "key": "B",
+              "text": "let"
+            },
+            {
+              "key": "C",
+              "text": "var"
+            },
+            {
+              "key": "D",
+              "text": "static"
+            }
+          ],
+          "userAnswer": "C",
+          "correctOption": "A",
+          "isCorrect": false,
+          "isUnanswered": false,
+          "explanation": "const - o'zgarmas havolani belgilaydi, unga boshqa yangi qiymat o'zlashtirib bo'lmaydi.",
+          "pointsEarned": 0,
+          "maxPoints": 2
+        }
+      ]
+    },
+    {
+      "id": "sub-ic6jclaa",
+      "testId": "test-it-01",
+      "testTitle": "Informatika va IT: Dasturlash va Algoritmlar",
+      "subject": "IT va Dasturlash",
+      "userId": "guest-dh40rjl",
+      "studentName": "O'quvchi",
+      "studentPhone": "Mehmon",
+      "userAnswers": {},
+      "score": 0,
+      "maxScore": 6,
+      "percentage": 0,
+      "totalQuestions": 3,
+      "correctCount": 0,
+      "incorrectCount": 0,
+      "unansweredCount": 3,
+      "passed": false,
+      "timeSpentSeconds": 5,
+      "submittedAt": 1791171883291,
+      "results": [
+        {
+          "questionId": "qit-1",
+          "questionText": "Ikkilik qidirish (Binary Search) algoritmining o'rtacha vaqt murakkabligi qanday?",
+          "options": [
+            {
+              "key": "A",
+              "text": "O(log n)"
+            },
+            {
+              "key": "B",
+              "text": "O(n)"
+            },
+            {
+              "key": "C",
+              "text": "O(n²)"
+            },
+            {
+              "key": "D",
+              "text": "O(1)"
+            }
+          ],
+          "correctOption": "A",
+          "isCorrect": false,
+          "isUnanswered": true,
+          "explanation": "Binary Search har bir qadamda massivni ikkiga bo'lgani uchun uning vaqt murakkabligi O(log n) ga teng.",
+          "pointsEarned": 0,
+          "maxPoints": 2
+        },
+        {
+          "questionId": "qit-2",
+          "questionText": "Quyidagilardan qaysi biri HTTP protokolidagi xavfsiz (shifrlangan) standart hisoblanadi?",
+          "options": [
+            {
+              "key": "A",
+              "text": "HTTPS (port 443)"
+            },
+            {
+              "key": "B",
+              "text": "FTP (port 21)"
+            },
+            {
+              "key": "C",
+              "text": "Telnet (port 23)"
+            },
+            {
+              "key": "D",
+              "text": "HTTP (port 80)"
+            }
+          ],
+          "correctOption": "A",
+          "isCorrect": false,
+          "isUnanswered": true,
+          "explanation": "HTTPS (SSL/TLS orqali shifrlangan HTTP) 443-portda ma'lumotlar xavfsizligini ta'minlaydi.",
+          "pointsEarned": 0,
+          "maxPoints": 2
+        },
+        {
+          "questionId": "qit-3",
+          "questionText": "JavaScript tilida qaysi kalit so'z qayta qiymat berib bo'lmaydigan (o'zgarmas) o'zgaruvchi e'lon qiladi?",
+          "options": [
+            {
+              "key": "A",
+              "text": "const"
+            },
+            {
+              "key": "B",
+              "text": "let"
+            },
+            {
+              "key": "C",
+              "text": "var"
+            },
+            {
+              "key": "D",
+              "text": "static"
+            }
+          ],
+          "correctOption": "A",
+          "isCorrect": false,
+          "isUnanswered": true,
+          "explanation": "const - o'zgarmas havolani belgilaydi, unga boshqa yangi qiymat o'zlashtirib bo'lmaydi.",
+          "pointsEarned": 0,
+          "maxPoints": 2
+        }
+      ]
+    },
     {
       "id": "sub-yl3zae3l",
       "testId": "test-math-01",

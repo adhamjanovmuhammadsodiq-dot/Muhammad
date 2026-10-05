@@ -5,7 +5,7 @@ import { AdminStats, Submission, Question } from '../types.ts';
 import { PlusCircle, Trash2, Edit3, Save, CheckCircle2, Download, Search, Settings, HelpCircle, Layers, Users, BarChart3, Bot, ArrowRight, ShieldAlert } from 'lucide-react';
 
 export const TeacherDashboard: React.FC = () => {
-  const { user, openAuthModal } = useAuth();
+  const { user, openAuthModal, quickLoginAsTeacher } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'tests' | 'create' | 'submissions' | 'telegram'>('tests');
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -317,20 +317,35 @@ export const TeacherDashboard: React.FC = () => {
 
   if (!isTeacherOrAdmin) {
     return (
-      <div className="max-w-md mx-auto my-12 p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-4">
-        <ShieldAlert className="w-12 h-12 text-indigo-500 mx-auto" />
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-          O'qituvchi / Administrator Paneli
-        </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Ushbu bo'limga faqat o'qituvchilar va tizim ma'murlari kirishi mumkin.
-        </p>
-        <button
-          onClick={() => openAuthModal('teacher')}
-          className="h-10 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-colors"
-        >
-          O'qituvchi sifatida kirish
-        </button>
+      <div className="max-w-md mx-auto my-12 p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-5 shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mx-auto">
+          <ShieldAlert className="w-7 h-7" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Ustoz / Administrator Paneli
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+            Testlarni yaratish, o'quvchilar natijalarini kuzatish va platformani boshqarish uchun ustoz sifatida kiring.
+          </p>
+        </div>
+
+        <div className="space-y-2.5 pt-2">
+          <button
+            onClick={() => quickLoginAsTeacher()}
+            className="w-full h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <span>Ustoz / Admin sifatida darhol kirish (1 bosishda)</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => openAuthModal('teacher')}
+            className="w-full h-10 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            Parol bilan kirish
+          </button>
+        </div>
       </div>
     );
   }

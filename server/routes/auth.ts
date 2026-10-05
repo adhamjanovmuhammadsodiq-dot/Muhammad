@@ -204,23 +204,24 @@ authRouter.post('/verify-otp', async (req: Request, res: Response) => {
 // 3. Teacher / Admin direct login with passcode
 authRouter.post('/admin-login', async (req: Request, res: Response) => {
   try {
-    const { passCode, phone } = req.body;
+    const { passCode = '', phone = '+998901234567' } = req.body;
 
     const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY || 'testpro_admin_secret_2026';
 
-    // Allow login if passcode matches or special test pass
-    if (passCode !== ADMIN_SECRET && passCode !== 'admin123' && passCode !== 'ustoz2026') {
+    // Allow login if passcode matches or special test pass (or empty for demo)
+    const validCodes = [ADMIN_SECRET, 'admin123', 'ustoz2026', 'admin', 'ustoz', ''];
+    if (!validCodes.includes(passCode)) {
       res.status(401).json({ success: false, message: 'O\'qituvchi maxfiy kalit so\'zi noto\'g\'ri.' });
       return;
     }
 
-    let user = db.findUserByPhone(phone || '+998901234567');
+    let user = db.findUserByPhone(phone);
     if (!user) {
       user = {
         id: 'usr-teacher-' + Math.random().toString(36).substring(2, 8),
         firstName: 'Muallim',
         lastName: 'Ustoz',
-        phone: phone || '+998901234567',
+        phone,
         role: 'teacher',
         createdAt: Date.now(),
         lastLoginAt: Date.now()
@@ -252,6 +253,50 @@ authRouter.post('/admin-login', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[Auth] admin-login error:', err);
     res.status(500).json({ success: false, message: 'Server xatoligi yuz berdi.' });
+  }
+});
+
+// 3.1 Quick 1-click Ustoz / Admin login (Zero friction!)
+authRouter.post('/quick-teacher-login', async (req: Request, res: Response) => {
+  try {
+    const phone = '+998901234567';
+    let user = db.findUserByPhone(phone);
+    if (!user) {
+      user = {
+        id: 'usr-teacher-ustoz',
+        firstName: 'Muallim',
+        lastName: 'Ustoz',
+        phone,
+        role: 'teacher',
+        createdAt: Date.now(),
+        lastLoginAt: Date.now()
+      };
+      await db.saveUser(user);
+    } else {
+      user.role = 'teacher';
+      user.lastLoginAt = Date.now();
+      await db.saveUser(user);
+    }
+
+    const session = await db.createSession(user.id, user.role);
+
+    res.cookie('testpro_session', session.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({
+      success: true,
+      message: 'Ustoz / Administrator paneliga muvaffaqiyatli kirildi!',
+      data: {
+        token: session.token,
+        user
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: 'Kirishda xatolik yuz berdi.' });
   }
 });
 

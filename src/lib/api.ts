@@ -95,6 +95,15 @@ export class ApiClient {
     return res;
   }
 
+  public static async quickTeacherLogin(): Promise<{ token: string; user: User }> {
+    const res = await this.request<{ token: string; user: User }>('/api/auth/quick-teacher-login', {
+      method: 'POST',
+    });
+    this.setToken(res.token);
+    this.setCachedUser(res.user);
+    return res;
+  }
+
   public static async getCurrentUser(): Promise<User> {
     const res = await this.request<{ user: User }>('/api/auth/me');
     this.setCachedUser(res.user);
